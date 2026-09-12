@@ -114,6 +114,8 @@ const productStructuredData = buildProductJsonLd(product, {
   title={productSeoTitle}
   description={plainMetaDescription}
   image={presentation.primaryImageUrl || undefined}
+  imageAlt={`${presentation.displayTitle} at SES ICT HUB`}
+  ogType="product"
   canonical={canonicalPath}
 >
   <div class="product-page">
