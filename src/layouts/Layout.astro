@@ -4,27 +4,30 @@ import AnnouncementStrip from '../components/AnnouncementStrip.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FloatingChat from '../components/FloatingChat.astro';
-import { getSiteAssets } from '../lib/siteAssets';
 
 interface Props {
   title: string;
   description?: string | undefined;
   image?: string | undefined;
+  imageAlt?: string | undefined;
+  ogType?: 'website' | 'product' | 'article' | undefined;
   canonical?: string | undefined;
   hideAnnouncementStrip?: boolean | undefined;
 }
 
-const siteAssets = getSiteAssets(import.meta.env.PUBLIC_SUPABASE_URL);
-
 const {
   title,
   description = "SES ICT HUB - Brand-new and Ex-uk Grade A refurb electronics in Kenya. Laptops, desktops, printers, smartphones, and accessories with clear pricing and stock status.",
-  image = siteAssets.hero.src,
+  image,
+  imageAlt,
+  ogType = 'website',
   canonical,
   hideAnnouncementStrip = false
 } = Astro.props;
 
 const canonicalURL = new URL(canonical || Astro.url.pathname, Astro.site || 'https://sesicthub.co.ke');
+const defaultSocialImage = '/site-assets/og-default.jpg';
+const socialImage = String(image || '').trim() || defaultSocialImage;
 const plainDescription = String(description || '')
   .replace(/<[^>]*>/g, ' ')
   .replace(/\s+/g, ' ')
@@ -33,7 +36,9 @@ const plainDescription = String(description || '')
 const safeDescription =
   plainDescription ||
   'SES ICT HUB - Brand-new and Ex-uk Grade A refurb electronics in Kenya. Laptops, desktops, printers, smartphones, and accessories with clear pricing and stock status.';
-const canonicalImage = new URL(image, Astro.site || canonicalURL).toString();
+const canonicalImage = new URL(socialImage, Astro.site || canonicalURL).toString();
+const safeImageAlt = String(imageAlt || `${title} — SES ICT HUB`).replace(/\s+/g, ' ').trim().slice(0, 200);
+const usesDefaultSocialImage = socialImage === defaultSocialImage;
 const faviconVersion = '20260322';
 ---
 
@@ -58,18 +63,25 @@ const faviconVersion = '20260322';
     <link rel="canonical" href={canonicalURL} />
     
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={safeDescription} />
+    <meta property="og:site_name" content="SES ICT HUB" />
+    <meta property="og:locale" content="en_KE" />
     <meta property="og:image" content={canonicalImage} />
+    <meta property="og:image:secure_url" content={canonicalImage} />
+    <meta property="og:image:alt" content={safeImageAlt} />
+    {usesDefaultSocialImage && <meta property="og:image:type" content="image/jpeg" />}
+    {usesDefaultSocialImage && <meta property="og:image:width" content="1200" />}
+    {usesDefaultSocialImage && <meta property="og:image:height" content="630" />}
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={safeDescription} />
-    <meta property="twitter:image" content={canonicalImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={safeDescription} />
+    <meta name="twitter:image" content={canonicalImage} />
+    <meta name="twitter:image:alt" content={safeImageAlt} />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
