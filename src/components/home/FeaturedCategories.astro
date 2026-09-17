@@ -69,7 +69,7 @@ const categories = [
   .category-strip__inner {
     display: grid;
     gap: 1rem;
-    width: min(100% - 2rem, 1180px);
+    width: min(calc(100% - 2 * var(--storefront-gutter)), var(--storefront-content-width));
     margin-inline: auto;
   }
 

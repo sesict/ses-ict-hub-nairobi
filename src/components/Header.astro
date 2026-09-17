@@ -1,14 +1,8 @@
 ---
 import { Image } from 'astro:assets';
-import { buildImageOnError, getSiteAssets } from '../lib/siteAssets';
 import { mainShopLinks, supportLinks } from '../lib/storefront';
 import type { SessionLocals } from '../lib/app-types';
 
-const siteAssets = getSiteAssets(import.meta.env.PUBLIC_SUPABASE_URL);
-const logoImage = siteAssets.logo;
-const logoOnError = buildImageOnError(logoImage.fallback);
-const logoWidth = 96;
-const logoHeight = 96;
 const locals = Astro.locals as SessionLocals;
 const user = locals.user;
 const isStaff = locals.isStaff;
@@ -21,19 +15,16 @@ const authLinks = user
         ]
   : [{ label: 'Sign In', href: '/auth/login' }];
 
-const desktopLinks = [...mainShopLinks, { label: 'FAQ', href: '/faq' }];
-const mobileLinks = [...mainShopLinks, ...supportLinks];
-const megaMenuLinks = [
-  { label: 'Business laptops', href: '/category/laptops?condition=refurbished', note: 'Core i5, i7, SSD, and warranty options' },
-  { label: 'Office printers', href: '/category/printers', note: 'Ink tank, laser, and setup help' },
-  { label: 'Desktop setups', href: '/category/desktops', note: 'Ready for offices, shops, and schools' },
-  { label: 'Accessories', href: '/search?category=accessories', note: 'Chargers, storage, bags, and cables' }
-];
+const featuredCategoryLabels = ['Laptops', 'Smartphones', 'Printers', 'Desktops'];
+const desktopLinks = featuredCategoryLabels.flatMap((label) =>
+  mainShopLinks.filter((link) => link.label === label)
+);
+const desktopSupportLinks = supportLinks.filter((link) => ['FAQ', 'Contact'].includes(link.label));
 ---
 
 <header class="site-header">
   <div class="header-trust-bar">
-    <div class="container header-trust-inner">
+    <div class="storefront-container header-trust-inner">
       <span>Tested devices</span>
       <span>Warranty included</span>
       <span>Nairobi pickup</span>
@@ -42,54 +33,22 @@ const megaMenuLinks = [
     </div>
   </div>
 
-  <div class="container header-shell">
+  <div class="storefront-container header-shell">
     <a href="/" class="brand" aria-label="SES ICT HUB home">
       <span class="brand-mark">
         <Image
-          src={logoImage.src}
+          src="/site-assets/ses-logo-header.svg"
           alt="SES ICT HUB logo"
-          width={logoWidth}
-          height={logoHeight}
+          width={320}
+          height={120}
           class="brand-logo"
           loading="eager"
           decoding="async"
-          onerror={logoOnError}
         />
       </span>
     </a>
 
-    <nav class="desktop-nav" aria-label="Primary">
-      <ul class="desktop-nav-list" role="list">
-        <li class="nav-mega-item">
-          <a href="/shop" class="desktop-nav-link">Shop</a>
-          <div class="mega-menu" aria-label="Shop categories">
-            <div class="mega-menu-inner">
-              <p>Shop categories</p>
-              <div class="mega-menu-grid">
-                {megaMenuLinks.map((link) => (
-                  <a href={link.href}>
-                    <strong>{link.label}</strong>
-                    <span>{link.note}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-        </li>
-        {desktopLinks.map((link) => (
-          <li><a href={link.href} class="desktop-nav-link">{link.label}</a></li>
-        ))}
-      </ul>
-    </nav>
-
-    <div class="header-actions">
-      <div class="desktop-account-links">
-        {authLinks.map((link) => (
-          <a href={link.href} class={`account-link ${link.label === 'Logout' ? 'muted' : ''}`}>{link.label}</a>
-        ))}
-      </div>
-
-      <form class="header-search-form" action="/search" role="search">
+    <form class="header-search-form" action="/search" role="search">
         <label class="sr-only" for="header-search-input">Search products</label>
         <span aria-hidden="true" class="header-search-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -105,7 +64,14 @@ const megaMenuLinks = [
           autocomplete="off"
         />
         <button type="submit">Search</button>
-      </form>
+    </form>
+
+    <div class="header-actions">
+      <div class="desktop-account-links">
+        {authLinks.map((link) => (
+          <a href={link.href} class={`account-link ${link.label === 'Logout' ? 'muted' : ''}`}>{link.label}</a>
+        ))}
+      </div>
 
       <a href="/cart" class="cart-link" aria-label="View cart">
         <span class="cart-icon" aria-hidden="true">
@@ -136,8 +102,43 @@ const megaMenuLinks = [
     </div>
   </div>
 
+  <div class="desktop-nav-bar">
+    <div class="storefront-container desktop-nav-inner">
+      <nav class="desktop-nav" aria-label="Shop categories">
+        <ul class="desktop-nav-list" role="list">
+          <li>
+            <details id="category-menu" class="category-menu">
+              <summary class="desktop-nav-link category-menu-toggle">
+                All Categories
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </summary>
+              <div class="mega-menu">
+                <a href="/shop" class="all-products-link">Browse all products <span aria-hidden="true">→</span></a>
+                <ul class="mega-menu-grid" role="list">
+                  {mainShopLinks.map((link) => (
+                    <li><a href={link.href}>{link.label}</a></li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          </li>
+          {desktopLinks.map((link) => (
+            <li><a href={link.href} class="desktop-nav-link">{link.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <nav class="desktop-support-links" aria-label="Support">
+        {desktopSupportLinks.map((link) => (
+          <a href={link.href} class="desktop-nav-link">{link.label}</a>
+        ))}
+      </nav>
+    </div>
+  </div>
+
   <div id="mobile-menu" class="mobile-menu" hidden>
-    <div class="container mobile-menu-inner">
+    <div class="storefront-container mobile-menu-inner">
       <div class="mobile-menu-block">
         <p class="mobile-menu-title">Shop</p>
         <form class="mobile-search-form" action="/search" role="search">
@@ -152,11 +153,20 @@ const megaMenuLinks = [
           <button type="submit">Search</button>
         </form>
         <ul class="mobile-menu-list" role="list">
-          {mobileLinks.map((link) => (
+          {mainShopLinks.map((link) => (
             <li><a href={link.href} class="mobile-menu-link">{link.label}</a></li>
           ))}
         </ul>
       </div>
+
+      <nav class="mobile-menu-block" aria-label="Support">
+        <p class="mobile-menu-title">Support</p>
+        <ul class="mobile-menu-list" role="list">
+          {supportLinks.map((link) => (
+            <li><a href={link.href} class="mobile-menu-link">{link.label}</a></li>
+          ))}
+        </ul>
+      </nav>
 
       <div class="mobile-menu-block">
         <p class="mobile-menu-title">Account</p>
@@ -178,8 +188,7 @@ const megaMenuLinks = [
     top: 0;
     z-index: 90;
     border-bottom: 1px solid rgba(229, 231, 235, 0.86);
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
+    background: #ffffff;
   }
 
   .header-trust-bar {
@@ -223,34 +232,25 @@ const megaMenuLinks = [
 
   .header-shell {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: max-content minmax(0, 1fr);
     align-items: center;
-    gap: 0.85rem;
-    min-height: 4.65rem;
+    gap: var(--space-3);
+    min-height: 4.75rem;
   }
 
   .brand {
     display: inline-flex;
     align-items: center;
-    min-width: 0;
+    width: 7rem;
+    min-height: 3rem;
   }
 
   .brand-mark {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: clamp(4.25rem, 11vw, 6.5rem);
-    height: clamp(2.55rem, 6vw, 3.85rem);
-    padding: 0.1rem 0.35rem;
-    border-radius: 1.2rem;
-    border: 1px solid rgba(37, 99, 235, 0.12);
-    background:
-      radial-gradient(circle at top left, rgba(255, 255, 255, 1), rgba(241, 245, 255, 0.98)),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95));
-    box-shadow:
-      0 12px 28px rgba(15, 23, 42, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    overflow: hidden;
+    width: 100%;
+    height: 2.625rem;
     flex-shrink: 0;
   }
 
@@ -258,111 +258,120 @@ const megaMenuLinks = [
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transform: scale(2.55);
-    transform-origin: center;
     display: block;
   }
 
-  .desktop-nav {
+  .desktop-nav-bar {
     display: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .desktop-nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
   }
 
   .desktop-nav-list {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 1.05rem;
+    gap: var(--space-4);
+  }
+
+  .desktop-support-links {
+    display: flex;
+    gap: var(--space-3);
   }
 
   .desktop-nav-link,
   .account-link {
-    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    min-height: 3rem;
+    color: var(--color-text-soft);
     font-size: 0.86rem;
     font-weight: 800;
+    white-space: nowrap;
     transition: color 0.2s ease;
   }
 
   .desktop-nav-link:hover,
-  .nav-mega-item:focus-within > .desktop-nav-link,
-  .nav-mega-item:hover > .desktop-nav-link,
+  .category-menu[open] > .desktop-nav-link,
   .account-link:hover {
     color: var(--color-primary);
   }
 
-  .nav-mega-item {
+  .category-menu {
     position: relative;
+  }
+
+  .category-menu-toggle {
+    gap: var(--space-1);
+    color: var(--color-primary);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .category-menu-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .category-menu-toggle svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .category-menu[open] .category-menu-toggle svg {
+    transform: rotate(180deg);
   }
 
   .mega-menu {
     position: absolute;
-    top: calc(100% + 1rem);
-    left: 50%;
+    top: 100%;
+    left: 0;
     z-index: 100;
-    width: min(38rem, calc(100vw - 2rem));
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 0.5rem);
-    transition:
-      opacity 180ms ease,
-      transform 180ms ease;
-  }
-
-  .nav-mega-item:hover .mega-menu,
-  .nav-mega-item:focus-within .mega-menu {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate(-50%, 0);
-  }
-
-  .mega-menu-inner {
+    width: min(36rem, calc(100vw - 2 * var(--storefront-gutter)));
+    max-height: calc(100dvh - 11rem);
+    overflow-y: auto;
     display: grid;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid rgba(219, 229, 243, 0.92);
-    border-radius: 1.2rem;
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 24px 54px rgba(15, 23, 42, 0.16);
+    gap: var(--space-1);
+    padding: var(--space-2);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    background: #ffffff;
+    box-shadow: var(--shadow-lg);
   }
 
-  .mega-menu-inner p {
-    color: var(--color-text-muted);
-    font-size: 0.74rem;
-    font-weight: 850;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .all-products-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 2.75rem;
+    padding-inline: var(--space-2);
+    color: var(--color-primary);
+    font-weight: 800;
   }
 
   .mega-menu-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+    gap: 0.25rem var(--space-1);
   }
 
   .mega-menu-grid a {
-    display: grid;
-    gap: 0.3rem;
-    padding: 0.85rem;
-    border-radius: 0.9rem;
-    background: #f8fbff;
-    transition:
-      background-color 180ms ease,
-      transform 180ms ease;
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-size: 0.9rem;
+    font-weight: 700;
   }
 
-  .mega-menu-grid a:hover {
-    background: #eef5ff;
-    transform: translateY(-1px);
-  }
-
-  .mega-menu-grid strong {
-    color: var(--color-dark);
-    font-size: 0.95rem;
-  }
-
-  .mega-menu-grid span {
-    color: var(--color-text-muted);
-    font-size: 0.82rem;
-    line-height: 1.4;
+  .mega-menu-grid a:hover,
+  .all-products-link:hover {
+    background: var(--color-surface-strong);
   }
 
   .account-link.muted {
@@ -378,9 +387,6 @@ const megaMenuLinks = [
 
   .desktop-account-links {
     display: none;
-  }
-
-  .desktop-account-links {
     align-items: center;
     gap: 1rem;
   }
@@ -389,8 +395,9 @@ const megaMenuLinks = [
     display: none;
     align-items: center;
     gap: 0.45rem;
-    width: clamp(12rem, 16vw, 17.5rem);
-    min-height: 2.6rem;
+    width: 100%;
+    min-width: 0;
+    min-height: 3rem;
     padding: 0.26rem 0.35rem 0.26rem 0.75rem;
     border: 1px solid rgba(203, 213, 225, 0.92);
     border-radius: 999px;
@@ -424,7 +431,7 @@ const megaMenuLinks = [
 
   .header-search-form button {
     flex: 0 0 auto;
-    min-height: 2rem;
+    min-height: 2.5rem;
     padding: 0 0.75rem;
     border: 0;
     border-radius: 999px;
@@ -505,6 +512,9 @@ const megaMenuLinks = [
   .mobile-menu {
     border-bottom: 1px solid rgba(229, 231, 235, 0.92);
     background: rgba(255, 255, 255, 0.98);
+    max-height: calc(100dvh - 10rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .mobile-menu-inner {
@@ -566,27 +576,28 @@ const megaMenuLinks = [
     padding: 0.55rem 0;
     font-size: 1rem;
     font-weight: 700;
+    min-height: 2.75rem;
   }
 
   .mobile-menu-cta {
     width: 100%;
   }
 
-  @media (max-width: 419px) {
-    .header-shell {
-      min-height: 4.55rem;
-      gap: 0.65rem;
-    }
+  .site-header :is(a, button, summary, input):focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
 
-    .brand-mark {
-      width: 4.45rem;
-      height: 2.7rem;
-      border-radius: 1rem;
-    }
+  .header-trust-inner a:focus-visible {
+    outline-color: #ffffff;
+  }
 
-    .brand-logo {
-      transform: scale(2.35);
-    }
+  .header-search-form:focus-within {
+    border-color: var(--color-primary);
+  }
+
+  .mobile-menu[hidden] {
+    display: none;
   }
 
   @media (max-width: 719px) {
@@ -615,23 +626,34 @@ const megaMenuLinks = [
 
   @media (min-width: 720px) {
     .header-shell {
-      min-height: 4.8rem;
+      grid-template-columns: max-content minmax(0, 1fr) max-content;
+      min-height: 5.5rem;
+    }
+
+    .brand {
+      width: 8rem;
     }
 
     .brand-mark {
-      width: clamp(5rem, 9vw, 6.8rem);
-      height: clamp(2.85rem, 5vw, 4rem);
-      border-radius: 1.35rem;
-      padding-inline: 0.38rem;
+      height: 3rem;
     }
 
-    .brand-logo {
-      transform: scale(2.7);
+    .header-search-form {
+      display: flex;
+    }
+
+    .mobile-menu-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-3);
     }
   }
 
-  @media (min-width: 1080px) {
-    .desktop-nav {
+  @media (min-width: 1200px) {
+    .header-shell {
+      gap: var(--space-4);
+    }
+
+    .desktop-nav-bar {
       display: block;
     }
 
@@ -639,39 +661,13 @@ const megaMenuLinks = [
       display: flex;
     }
 
-    .header-search-form {
-      display: inline-flex;
+    .header-actions {
+      gap: var(--space-3);
     }
 
-    .mobile-menu-toggle {
+    .mobile-menu-toggle,
+    .mobile-menu {
       display: none;
-    }
-
-    .mobile-menu[hidden] {
-      display: none;
-    }
-  }
-
-  @media (min-width: 1080px) and (max-width: 1199px) {
-    .header-search-form {
-      width: 12rem;
-    }
-
-    .header-search-form button {
-      width: 2rem;
-      padding: 0;
-      overflow: hidden;
-      color: transparent;
-      position: relative;
-    }
-
-    .header-search-form button::before {
-      content: "→";
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      color: #ffffff;
     }
   }
 </style>
@@ -679,6 +675,8 @@ const megaMenuLinks = [
 <script>
   const toggle = document.getElementById('mobile-menu-toggle');
   const menu = document.getElementById('mobile-menu');
+  const categoryMenu = document.getElementById('category-menu');
+  const categoryToggle = categoryMenu?.querySelector('summary');
 
   function setMenuState(open: boolean) {
     if (!toggle || !menu) return;
@@ -706,13 +704,34 @@ const megaMenuLinks = [
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
+      if (categoryMenu instanceof HTMLDetailsElement && categoryMenu.open) {
+        categoryMenu.open = false;
+        categoryToggle?.focus();
+      }
+      if (toggle?.getAttribute('aria-expanded') === 'true') {
+        toggle.focus();
+      }
       setMenuState(false);
     }
   });
 
+  document.addEventListener('click', (event) => {
+    if (categoryMenu instanceof HTMLDetailsElement && event.target instanceof Node && !categoryMenu.contains(event.target)) {
+      categoryMenu.open = false;
+    }
+  });
+
+  categoryMenu?.addEventListener('focusout', (event) => {
+    if (categoryMenu instanceof HTMLDetailsElement && event.relatedTarget instanceof Node && !categoryMenu.contains(event.relatedTarget)) {
+      categoryMenu.open = false;
+    }
+  });
+
   window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1080) {
+    if (window.innerWidth >= 1200) {
       setMenuState(false);
+    } else if (categoryMenu instanceof HTMLDetailsElement) {
+      categoryMenu.open = false;
     }
   });
 
