@@ -1,36 +1,10 @@
-# SES E-commerce Redesign Instructions
+# SES E-Commerce Storefront (Production Maintenance)
 
-When working on the SES shop UI, follow these documentation files:
+## Core Guidelines
+- **Mobile-First & UI**: Build mobile-first. Maintain SES brand aesthetics (clean spacing, rounded cards, dark navy text, SES blue buttons).
+- **Product Presentation**: Product cards display square 1000x1000px images. Show clean specs (CPU, RAM, storage) where available. Use "Refurbished" instead of "Refurb" and "In Stock" instead of "Stock". Do not duplicate discount/savings copy.
+- **Cart & Contact**: Keep Add to Cart and WhatsApp floating actions accessible and non-intrusive.
 
-- docs/ses-ecommerce-design-guidelines.md
-- docs/design.md
-- docs/homepage-spec.md
-- docs/product-page-spec.md
-- docs/content-rules.md
-- docs/data-quality-rules.md
-
-## Priority areas
-
-1. Homepage
-2. Shop page
-3. Product cards
-4. Single product page
-
-## Design direction
-
-- Build mobile-first.
-- Keep the SES brand style: white/light grey backgrounds, dark navy text, SES blue buttons, rounded cards, clean spacing.
-- Make product images larger, cleaner, and more consistent.
-- Product images are usually 1000 x 1000 px and should display well in square product cards.
-- Use "Refurbished" instead of "Refurb".
-- Use "In Stock" instead of "Stock".
-- Do not duplicate savings or discount messages.
-- Show clean product specs such as processor, RAM, storage, and display where available.
-- Keep Add to Cart buttons clear and easy to tap.
-- Keep WhatsApp/contact access available without covering important product actions.
-
-## Do not change
-
-Do not change checkout, payment, cart, order, Supabase, webhook, or API logic unless the UI change directly requires it.
-
-Before finishing work, run available lint, test, or build commands if supported by the project.
+## Production Guardrails
+- **Logic Invariants**: Do not alter checkout, payment, cart, order calculation, auth, Supabase schemas, webhooks, or Cloudflare Worker deployment configs unless explicitly requested.
+- **Quality Gates**: Always run `npm run validate` (or `npm run lint && npm run test`) before completing any task.

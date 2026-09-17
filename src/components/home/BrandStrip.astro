@@ -46,7 +46,7 @@ const logoOnError = 'this.remove();';
   }
 
   .brand-strip__label {
-    width: min(100% - 2rem, 1180px);
+    width: min(calc(100% - 2 * var(--storefront-gutter)), var(--storefront-content-width));
     margin-inline: auto;
     color: #64748b;
     font-size: 0.72rem;

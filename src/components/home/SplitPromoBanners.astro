@@ -83,7 +83,7 @@ const promos = [
   .split-promos__inner {
     display: grid;
     gap: clamp(1rem, 2.4vw, 1.5rem);
-    width: min(100% - 2rem, 1180px);
+    width: min(calc(100% - 2 * var(--storefront-gutter)), var(--storefront-content-width));
     margin-inline: auto;
   }
 
@@ -215,7 +215,7 @@ const promos = [
 
   @media (max-width: 640px) {
     .split-promos__inner {
-      width: min(100% - 1rem, 1180px);
+      width: min(calc(100% - 2 * var(--storefront-gutter)), var(--storefront-content-width));
     }
 
     .split-promo__media {

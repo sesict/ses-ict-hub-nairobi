@@ -44,6 +44,8 @@
 
   --section-width: 1200px;
   --container: var(--section-width);
+  --storefront-content-width: 1180px;
+  --storefront-gutter: 1rem;
   --focus-ring: 0 0 0 3px rgba(21, 93, 252, 0.18);
   --transition-fast: 0.22s ease;
   --transition-slow: 0.36s ease;

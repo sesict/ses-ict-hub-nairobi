@@ -255,7 +255,7 @@ const slides = [
     z-index: 1;
     display: grid;
     align-items: center;
-    width: min(100% - 2rem, 1180px);
+    width: min(calc(100% - 2 * var(--storefront-gutter)), var(--storefront-content-width));
     min-height: inherit;
     margin-inline: auto;
     padding-block: clamp(3rem, 9vw, 6rem);
@@ -371,7 +371,7 @@ const slides = [
   .commerce-hero__controls {
     position: absolute;
     z-index: 2;
-    right: max(1rem, calc((100vw - 1180px) / 2));
+    right: max(var(--storefront-gutter), calc((100% - var(--storefront-content-width)) / 2));
     bottom: clamp(1rem, 3vw, 2rem);
     display: flex;
     flex-wrap: wrap;
@@ -414,7 +414,7 @@ const slides = [
 
     .commerce-hero__content {
       align-items: center;
-      width: min(100% - 2rem, 1180px);
+      width: min(calc(100% - 2 * var(--storefront-gutter)), var(--storefront-content-width));
       padding-block: 5.2rem 6.4rem;
       text-align: center;
     }
