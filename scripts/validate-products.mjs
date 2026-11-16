@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const dataPath = path.join(root, 'src', 'data', 'products_final.json');
+const dataPath = path.resolve(process.argv[2] || path.join(root, 'src', 'data', 'products_final.json'));
 const imageRoot = path.join(root, 'public', 'product-images');
 
 function asText(value) {

@@ -16,11 +16,19 @@ import { getHomepageProducts } from '../lib/catalog';
 import { homepageTestimonials } from '../lib/homepageContent';
 import { buildUseCaseCollections, getHomepageCategoryStartingPrices, getInventorySummary, selectHomepageDeals } from '../lib/homepage';
 import { storefrontDetails } from '../lib/storefront';
+import { getCatalogCategoryKey } from '../lib/catalog';
+import { getPrimaryImage } from '../lib/images';
 
 const publicSupabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 const catalogProducts = await getHomepageProducts(Astro.locals);
 const featuredDeals = selectHomepageDeals(catalogProducts);
 const categoryStartingPrices = getHomepageCategoryStartingPrices(catalogProducts);
+const categoryImages = Object.fromEntries(
+  Object.keys(categoryStartingPrices).map((category) => {
+    const product = catalogProducts.find((item) => getCatalogCategoryKey(item) === category);
+    return [category, product ? getPrimaryImage(product, { publicSupabaseUrl }) : ''];
+  })
+);
 const collections = buildUseCaseCollections(catalogProducts);
 const inventory = getInventorySummary(catalogProducts);
 const storeStructuredData = {
@@ -57,7 +65,7 @@ const storeStructuredData = {
     </form>
     <HomeHero />
     <WhyBuyFromSES />
-    <FeaturedCategories startingPrices={categoryStartingPrices} />
+    <FeaturedCategories startingPrices={categoryStartingPrices} categoryImages={categoryImages} />
     <FeaturedDeals products={featuredDeals} publicSupabaseUrl={publicSupabaseUrl} />
     <UseCaseCollections collections={collections} />
     <BrandStrip />

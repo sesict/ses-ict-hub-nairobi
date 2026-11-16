@@ -2,6 +2,7 @@
 import type { CatalogProduct } from '../../types/catalog';
 import ProductCard from '../ui/ProductCard.astro';
 import { getCatalogCategoryKey } from '../../lib/catalog';
+import { getStoreCategoryBySlug } from '../../lib/productPresentation';
 
 interface Props {
   products: CatalogProduct[];
@@ -10,15 +11,8 @@ interface Props {
 
 const { products, publicSupabaseUrl } = Astro.props as Props;
 const visibleProducts = products.slice(0, 12);
-const categoryLabels: Record<string, { pill: string; badge: string }> = {
-  laptops: { pill: 'Laptops', badge: 'Laptop' },
-  smartphones: { pill: 'Smartphones', badge: 'Smartphone' },
-  printers: { pill: 'Printers', badge: 'Printer' },
-  desktops: { pill: 'Desktops', badge: 'Desktop' }
-};
-const filterCategories = Object.keys(categoryLabels).filter((category) =>
-  visibleProducts.some((product) => getCatalogCategoryKey(product) === category)
-);
+const filterCategories = [...new Set(visibleProducts.map(getCatalogCategoryKey))];
+const categoryLabel = (value: string) => getStoreCategoryBySlug(value)?.label || value;
 ---
 
 {visibleProducts.length > 0 && (
@@ -37,7 +31,7 @@ const filterCategories = Object.keys(categoryLabels).filter((category) =>
         <div class="featured-deals__filters" aria-label="Filter featured deals by category">
           <button type="button" data-deal-filter="all" aria-pressed="true">All</button>
           {filterCategories.map((category) => (
-            <button type="button" data-deal-filter={category} aria-pressed="false">{categoryLabels[category]?.pill || category}</button>
+            <button type="button" data-deal-filter={category} aria-pressed="false">{categoryLabel(category)}</button>
           ))}
         </div>
       )}
@@ -46,7 +40,7 @@ const filterCategories = Object.keys(categoryLabels).filter((category) =>
       <div class="featured-deals__grid">
         {visibleProducts.map((product) => (
           <div class="featured-deals__item" data-deal-category={getCatalogCategoryKey(product)}>
-            <span>{categoryLabels[getCatalogCategoryKey(product)]?.badge || 'Featured'}</span>
+            <span>{categoryLabel(getCatalogCategoryKey(product))}</span>
             <ProductCard product={product} publicSupabaseUrl={publicSupabaseUrl} />
           </div>
         ))}

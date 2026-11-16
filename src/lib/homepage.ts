@@ -243,8 +243,6 @@ export function selectDealsProducts(products: CatalogProduct[], limit = 3) {
   return sortByScore(deals, scoreBestValueCandidate).slice(0, limit);
 }
 
-const HOME_DEAL_CATEGORIES = ['laptops', 'smartphones', 'printers', 'desktops'];
-
 export function selectHomepageDeals(products: CatalogProduct[], limit = 12) {
   const deals = selectDealsProducts(products, products.length);
   const seen = new Set<string>();
@@ -256,7 +254,8 @@ export function selectHomepageDeals(products: CatalogProduct[], limit = 12) {
     picked.push(product);
   };
 
-  for (const category of HOME_DEAL_CATEGORIES) {
+  const categories = [...new Set(deals.map(getCatalogCategoryKey))];
+  for (const category of categories) {
     deals.filter((product) => getCatalogCategoryKey(product) === category).slice(0, 3).forEach(add);
   }
   deals.forEach(add);

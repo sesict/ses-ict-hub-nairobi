@@ -1,0 +1,164 @@
+{
+  "price_policy": "csv_final",
+  "inventory_policy": "csv_confirmed",
+  "confirmation": "User confirmed CSV prices as final customer prices and all listed quantities as real in this session.",
+  "rows": {
+    "ses:EK UK LAPTOPS:11": {
+      "reason": "User confirmed KSh 42,000; retain this Elite X2 configuration."
+    },
+    "ses:EK UK LAPTOPS:64": {
+      "exclude": true,
+      "reason": "User selected the KSh 42,000 row ses:EK UK LAPTOPS:11 instead."
+    },
+    "ses:UGREEN:172": {
+      "exclude": true,
+      "reason": "Same Lightwave power bank as ses:LIGHT WAVE:21; user confirmed 12-month warranty. Keep the 12-month row with quantity 5, not summed."
+    },
+    "ses:UPS:22": {
+      "exclude": true,
+      "reason": "Duplicate battery model, specifications, price, warranty and quantity; retain ses:LIGHT WAVE:16 without double-counting stock."
+    },
+    "ses:UPS:23": {
+      "exclude": true,
+      "reason": "Duplicate battery model, specifications, price, warranty and quantity; retain ses:LIGHT WAVE:17 without double-counting stock."
+    },
+    "ses:UPS:24": {
+      "exclude": true,
+      "reason": "Duplicate battery model, specifications, price, warranty and quantity; retain ses:LIGHT WAVE:18 without double-counting stock."
+    },
+    "ses:EK UK LAPTOPS:17": {
+      "slug": "hp-elitebook-840-g10-generation-512gb-ssd-core-i5"
+    },
+    "ses:EK UK LAPTOPS:27": {
+      "slug": "hp-elitebook-840-g10-generation-512gb-ssd-core-i7",
+      "sku": "HP-HP-ELITEBOOK-840-G10-GENERATION-I7-16GB-512GB-SSD-EX-UK-F04CAC8D-ROW-27"
+    },
+    "ses:EK UK LAPTOPS:18": {
+      "slug": "hp-elitebook-840-g6-generation-256gb-ssd-core-i7"
+    },
+    "ses:EK UK LAPTOPS:63": {
+      "slug": "hp-elitebook-840-g6-generation-256gb-ssd-core-i5"
+    },
+    "ses:PRIVACY FILTERS:6": {
+      "slug": "generic-privacy-filtre-wide-14-inch",
+      "sku": "GENERIC-GENERIC-PRIVACY-FILTRE-WIDE-BRAND-NEW-AED4E44E-ROW-6"
+    },
+    "ses:PRIVACY FILTERS:19": {
+      "slug": "generic-privacy-filtre-wide-27-inch",
+      "sku": "GENERIC-GENERIC-PRIVACY-FILTRE-WIDE-BRAND-NEW-AED4E44E-ROW-19"
+    },
+    "ses:EK UK LAPTOPS:28": {
+      "sku": "HP-HP-ELITEBOOK-840-G10-GENERATION-I7-16GB-512GB-SSD-EX-UK-F04CAC8D-ROW-28"
+    },
+    "ses:EK UK LAPTOPS:34": {
+      "sku": "HP-HP-VICTUS-15-RYZEN7-8GB-512GB-SSD-EX-UK-3BBAD33E-ROW-34"
+    },
+    "ses:EK UK LAPTOPS:35": {
+      "sku": "HP-HP-VICTUS-15-RYZEN7-8GB-512GB-SSD-EX-UK-3BBAD33E-ROW-35"
+    },
+    "ses:EK UK LAPTOPS:42": {
+      "sku": "HP-HP-VICTUS-15-RYZEN7-8GB-512GB-SSD-EX-UK-3BBAD33E-ROW-42"
+    },
+    "ses:EK UK LAPTOPS:36": {
+      "sku": "HP-HP-VICTUS-15-I7-8GB-512GB-SSD-EX-UK-917B2407-ROW-36"
+    },
+    "ses:EK UK LAPTOPS:37": {
+      "sku": "HP-HP-VICTUS-15-I7-8GB-512GB-SSD-EX-UK-917B2407-ROW-37"
+    },
+    "ses:EK UK LAPTOPS:38": {
+      "sku": "HP-HP-VICTUS-15-I7-8GB-512GB-SSD-EX-UK-917B2407-ROW-38"
+    },
+    "ses:EK UK LAPTOPS:39": {
+      "sku": "HP-HP-VICTUS-15-I7-8GB-512GB-SSD-EX-UK-917B2407-ROW-39"
+    },
+    "ses:EK UK LAPTOPS:40": {
+      "sku": "HP-HP-VICTUS-15-I7-8GB-512GB-SSD-EX-UK-917B2407-ROW-40"
+    },
+    "ses:EK UK LAPTOPS:41": {
+      "sku": "HP-HP-VICTUS-15-I7-8GB-512GB-SSD-EX-UK-917B2407-ROW-41"
+    },
+    "ses:EX UK DESKTOPS:40": {
+      "sku": "DELL-DELL-500-I5-EX-UK-19A1F7B6-ROW-40"
+    },
+    "ses:EX UK DESKTOPS:41": {
+      "sku": "DELL-DELL-500-I5-EX-UK-19A1F7B6-ROW-41"
+    },
+    "ses:EX UK DESKTOPS:44": {
+      "sku": "DELL-DELL-500-I5-EX-UK-19A1F7B6-ROW-44"
+    },
+    "ses:EX UK DESKTOPS:45": {
+      "sku": "DELL-DELL-500-I5-EX-UK-19A1F7B6-ROW-45"
+    },
+    "ses:EX UK DESKTOPS:46": {
+      "sku": "DELL-DELL-500-I7-EX-UK-F102DE21-ROW-46"
+    },
+    "ses:EX UK DESKTOPS:47": {
+      "sku": "DELL-DELL-500-I7-EX-UK-F102DE21-ROW-47"
+    },
+    "ses:EX UK DESKTOPS:48": {
+      "sku": "DELL-DELL-500-I7-EX-UK-F102DE21-ROW-48"
+    },
+    "ses:EX UK DESKTOPS:49": {
+      "sku": "DELL-DELL-500-I7-EX-UK-F102DE21-ROW-49"
+    },
+    "ses:UGREEN:153": {
+      "sku": "UGREEN-UGREEN-WS209-HITUNE-S3-OPEN-EAR-TRUE-WIRELESS-BLUETOOTH-EARBUDS-3A220FB2-ROW-153"
+    },
+    "ses:UGREEN:154": {
+      "sku": "UGREEN-UGREEN-WS209-HITUNE-S3-OPEN-EAR-TRUE-WIRELESS-BLUETOOTH-EARBUDS-3A220FB2-ROW-154"
+    },
+    "ses:UGREEN:198": {
+      "sku": "UGREEN-UGREEN-MU001-PORTABLE-WIRELESS-MOUSE-BRAND-NEW-133CC56F-ROW-198"
+    },
+    "ses:UGREEN:199": {
+      "sku": "UGREEN-UGREEN-MU001-PORTABLE-WIRELESS-MOUSE-BRAND-NEW-133CC56F-ROW-199"
+    },
+    "ses:Logitech:10": {
+      "sku": "LOGITECH-LOGITECH-M196-BLUETOOTH-MOUSE-BRAND-NEW-1A4A0077-ROW-10"
+    },
+    "ses:Logitech:11": {
+      "sku": "LOGITECH-LOGITECH-M196-BLUETOOTH-MOUSE-BRAND-NEW-1A4A0077-ROW-11"
+    },
+    "ses:Logitech:12": {
+      "sku": "LOGITECH-LOGITECH-M196-BLUETOOTH-MOUSE-BRAND-NEW-1A4A0077-ROW-12"
+    },
+    "ses:Logitech:14": {
+      "sku": "LOGITECH-LOGITECH-M190-FULL-SIZE-WIRELESS-MOUSE-BRAND-NEW-5FC8EF18-ROW-14"
+    },
+    "ses:Logitech:15": {
+      "sku": "LOGITECH-LOGITECH-M190-FULL-SIZE-WIRELESS-MOUSE-BRAND-NEW-5FC8EF18-ROW-15"
+    },
+    "ses:Logitech:28": {
+      "sku": "LOGITECH-LOGITECH-ZONE-VIBE-100-BLUETOOTH-HEADSET-BRAND-NEW-1C6D76E4-ROW-28"
+    },
+    "ses:Logitech:29": {
+      "sku": "LOGITECH-LOGITECH-ZONE-VIBE-100-BLUETOOTH-HEADSET-BRAND-NEW-1C6D76E4-ROW-29"
+    },
+    "ses:Logitech:39": {
+      "sku": "LOGITECH-LOGITECH-K380S-MULTI-DEVICE-BLUETOOTH-KEYBOARD-BRAND-NEW-1628FCA2-ROW-39"
+    },
+    "ses:Logitech:40": {
+      "sku": "LOGITECH-LOGITECH-K380S-MULTI-DEVICE-BLUETOOTH-KEYBOARD-BRAND-NEW-1628FCA2-ROW-40"
+    },
+    "ses:PRIVACY FILTERS:3": {
+      "sku": "GENERIC-GENERIC-PRIVACY-FILTRE-BRAND-NEW-B52D7D3A-ROW-3"
+    },
+    "ses:PRIVACY FILTERS:5": {
+      "sku": "GENERIC-GENERIC-PRIVACY-FILTRE-BRAND-NEW-B52D7D3A-ROW-5"
+    },
+    "ses:PRIVACY FILTERS:8": {
+      "sku": "GENERIC-GENERIC-PRIVACY-FILTRE-BRAND-NEW-B52D7D3A-ROW-8"
+    },
+    "ses:PRIVACY FILTERS:11": {
+      "sku": "GENERIC-GENERIC-PRIVACY-FILTRE-BRAND-NEW-B52D7D3A-ROW-11"
+    },
+    "ses:ASUS & MSI:4": {
+      "exclude": true,
+      "reason": "Pending user decision on identical listed ASUS configuration at different prices; held from release."
+    },
+    "ses:ASUS & MSI:5": {
+      "exclude": true,
+      "reason": "Pending user decision on identical listed ASUS configuration at different prices; held from release."
+    }
+  }
+}

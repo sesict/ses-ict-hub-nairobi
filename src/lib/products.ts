@@ -118,12 +118,15 @@ function getImageCandidates(row: RawJsonProduct) {
   return Array.from(new Set(candidates));
 }
 
-function rawToCatalogRow(row: RawJsonProduct, index: number): Record<string, unknown> {
+export function rawToCatalogRow(row: RawJsonProduct, index = 0): Record<string, unknown> {
   const slug = normalizeText(row.slug || row['URL Slug']);
   const title = normalizeText(row.title || row['Product Name']) || normalizeText(row.Model) || slug;
   const price = parsePositiveNumber(row.price_kes ?? row['Price (KES)'] ?? row.price) ?? 0;
   const regularPrice = parsePositiveNumber(row.compare_at_kes ?? row['Regular Price (KES)'] ?? row.compare_at_price);
   const condition = normalizeCondition(row.condition ?? row.Condition);
+  const stockQty = row.stock_qty == null || row.stock_qty === ''
+    ? null
+    : Number.isFinite(Number(row.stock_qty)) ? Number(row.stock_qty) : null;
   const ramGb = parseGbValue(row.ram_gb ?? row.RAM);
   const storageGb = parseGbValue(row.storage_gb ?? row.Storage);
   const storageType = getStorageType(row.storage_type ?? row.Storage);
@@ -147,8 +150,8 @@ function rawToCatalogRow(row: RawJsonProduct, index: number): Record<string, unk
     brand: normalizeText(row.brand ?? row.Brand) || null,
     price_kes: price,
     compare_at_kes: regularPrice !== null && regularPrice > price ? regularPrice : null,
-    in_stock: price > 0,
-    stock_qty: price > 0 ? 1 : 0,
+    in_stock: typeof row.in_stock === 'boolean' ? row.in_stock : stockQty !== null ? stockQty > 0 : price > 0,
+    stock_qty: stockQty ?? (price > 0 ? 1 : 0),
     condition,
     refurb_grade: condition === 'refurbished' ? 'grade_a' : null,
     short_specs: shortSpecs || normalizeText(row.short_specs ?? row['Short Description']) || null,
@@ -157,8 +160,8 @@ function rawToCatalogRow(row: RawJsonProduct, index: number): Record<string, unk
     warranty_months: parsePositiveNumber(row.warranty_months) || null,
     images: getImageCandidates(row),
     image_overrides: Array.isArray(row.image_overrides) ? row.image_overrides : null,
-    featured_home: index < 24,
-    featured_rank: index + 1,
+    featured_home: typeof row.featured_home === 'boolean' ? row.featured_home : index < 24,
+    featured_rank: Number.isFinite(Number(row.featured_rank)) ? Number(row.featured_rank) : index + 1,
     sku: normalizeText(row.sku) || slug,
     status: normalizeText(row.status) || (price > 0 ? 'active' : 'draft'),
     cpu: normalizeText(row.cpu ?? row.Processor) || null,

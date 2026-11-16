@@ -68,17 +68,37 @@ test('homepage deals reserve space for available categories and keep true discou
   assert.equal(new Set(selected.map((product) => product.slug)).size, selected.length);
 });
 
+test('homepage deals rotate through newly available catalog categories', () => {
+  const categories = ['Laptops', 'Desktops', 'Printers', 'Accessories', 'Monitors', 'Networking', 'UPS'];
+  const deals = categories.map((category) => createProduct({
+    id: category,
+    slug: category.toLowerCase(),
+    category,
+    featured_home: false
+  }));
+  const selected = selectHomepageDeals(deals, 12);
+  assert.deepEqual(new Set(selected.map((product) => product.category)), new Set(categories));
+});
+
 test('category starting prices use available catalog prices only', () => {
   const prices = getHomepageCategoryStartingPrices([
     createProduct({ id: 'l1', slug: 'l1', price_kes: 42000 }),
     createProduct({ id: 'l2', slug: 'l2', price_kes: 25000 }),
     createProduct({ id: 'l3', slug: 'l3', price_kes: 10000, in_stock: false }),
-    createProduct({ id: 'p1', slug: 'p1', category: 'Printers', price_kes: 27000 })
+    createProduct({ id: 'p1', slug: 'p1', category: 'Printers', price_kes: 27000 }),
+    createProduct({ id: 'n1', slug: 'n1', category: 'Networking', price_kes: 2000 }),
+    createProduct({ id: 'u1', slug: 'u1', category: 'UPS', price_kes: 5000 }),
+    createProduct({ id: 'm1', slug: 'm1', category: 'Monitors', price_kes: 7000 }),
+    createProduct({ id: 'a1', slug: 'a1', category: 'Accessories', price_kes: 1000 })
   ]);
 
   assert.equal(prices.laptops, 25000);
   assert.equal(prices.printers, 27000);
   assert.equal(prices.smartphones, undefined);
+  assert.equal(prices.networking, 2000);
+  assert.equal(prices.ups, 5000);
+  assert.equal(prices.monitors, 7000);
+  assert.equal(prices.accessories, 1000);
 });
 
 test('homepage testimonials dedupe duplicate approved rows and cap output', () => {
