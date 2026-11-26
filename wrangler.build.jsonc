@@ -1,8 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ses-hub-superbase-stack-app",
-  "account_id": "e1d8076a3dc603837814ca828736561f",
-  "workers_dev": false,
+  "account_id": "4b4295025db1d29a5f0a52288da307bb",
+  "workers_dev": true,
   "compatibility_date": "2026-03-06",
   "compatibility_flags": [
     "nodejs_compat"
@@ -13,8 +13,8 @@
   "kv_namespaces": [
     {
       "binding": "SESSION",
-      "id": "855da47786b843709e951dcef310b455",
-      "preview_id": "bccf2071bd4b43a183df8c896f240b15"
+      "id": "34f3820170084665891b64c9a012a37c",
+      "preview_id": "a4f71bdd496b43838fe312d1bbe22c6f"
     }
   ]
 }

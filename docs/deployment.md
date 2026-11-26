@@ -1,173 +1,106 @@
-# Deployment Guide (Cloudflare Worker Only)
+# Client Cloudflare deployment and domain cutover
 
-This project deploys only to a Cloudflare Worker using `wrangler deploy`.
+The storefront deploys as an Astro Cloudflare Worker. The client repository is
+`git@github.com:sesict/ses-ict-hub-nairobi.git`.
 
-## Locked Cloudflare Account
+## Client resources
 
-- `account_id`: `e1d8076a3dc603837814ca828736561f`
-- Source of truth: `wrangler.jsonc`
-- Project wrapper: `scripts/wrangler-project.sh`
+- Account: `4b4295025db1d29a5f0a52288da307bb`
+- Zone: `f1b6d3e1359d5c5837ce547c0da54ccc` (`sesicthub.co.ke`)
+- Worker: `ses-hub-superbase-stack-app`
+- Preview: `https://ses-hub-superbase-stack-app.sesicthub224.workers.dev`
+- Redirect Worker: `ses-ict-hub-www-redirect`
+- Supabase: `https://qpopsroxrljpcryawmpb.supabase.co`
 
-## Required Deployment Credential
+`wrangler.jsonc` initially has no custom-domain routes. Deploying this configuration
+updates only the client preview. The original account and nameservers remain intact.
+The client SESSION namespaces are defined in both Wrangler configurations.
 
-Set this in `.env`, `.env.local`, or your shell/CI secret store (never commit real value):
+## Credentials and build
 
-```bash
-CLOUDFLARE_ACCOUNT_ID=e1d8076a3dc603837814ca828736561f
-export CLOUDFLARE_API_TOKEN='<your-token>'
-```
+Copy `.env.example` to `.env.client.local`, which is ignored by Git. The command
+wrapper parses this file without executing shell content. Explicit environment
+variables take precedence. It checks the client account and Supabase URL.
+Do not copy migration backups, access tokens, service keys, or customer exports into Git.
 
-Project npm scripts now load `.env` and `.env.local` automatically for Wrangler commands.
-`.env.local` takes precedence if both files exist.
-
-## GitHub Actions CI
-
-The current GitHub Actions workflow validates the storefront only. It does not deploy
-and does not require real secret values.
-
-`npm run validate` includes `npm run config:check`, a non-mutating repository check
-that verifies:
-
-- manual deploy scripts are still wired through `scripts/deploy-worker.sh`
-- Astro remains configured for Cloudflare Worker server output
-- `wrangler.jsonc` still points at the locked Cloudflare account, Worker output, assets, `SESSION` KV binding, and apex route
-- `.env.example` and deployment docs list the expected environment keys
-
-Do not add `npm run env:check` to pull-request CI unless the workflow has access to
-protected secrets. Forked pull requests will not receive repository secrets.
-
-## Environment Keys
-
-Current CI config check requires these names to stay documented, but not populated:
+Required values:
 
 - `PUBLIC_SUPABASE_URL`
-- `PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `PUBLIC_SUPABASE_ANON_KEY` (publishable key)
 - `PUBLIC_FALLBACK_IMAGE_URL`
 - `PUBLIC_TURNSTILE_SITE_KEY`
-- `TURNSTILE_SECRET_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (server only)
+- `TURNSTILE_SECRET_KEY` (server only)
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
 
-Manual deploy requires:
+Use a client token with Workers Scripts Edit, Workers KV Storage Edit, Workers
+Routes Edit, Zone Read, Zone Settings Edit, DNS Edit, SSL and Certificates Edit,
+and Turnstile Edit on the intended account/zone. The migration additionally needs
+DNS Read on the source zone to export all records accurately.
 
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID` unset or exactly `e1d8076a3dc603837814ca828736561f`
-
-Production Worker runtime requires:
-
-- `PUBLIC_SUPABASE_URL`
-- `PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `PUBLIC_FALLBACK_IMAGE_URL`
-- `PUBLIC_TURNSTILE_SITE_KEY`
-- `TURNSTILE_SECRET_KEY`
-
-Optional Meta/WhatsApp runtime keys:
-
-- `PUBLIC_META_PIXEL_ID`
-- `META_PIXEL_ID`
-- `META_CAPI_TOKEN`
-- `MESSENGER_VERIFY_TOKEN`
-- `MESSENGER_PAGE_ACCESS_TOKEN`
-- `FACEBOOK_APP_ID`
-- `FACEBOOK_APP_SECRET`
-- `WHATSAPP_TOKEN`
-- `WHATSAPP_PHONE_NUMBER_ID`
-- `WHATSAPP_NOTIFY_TO`
-
-For WhatsApp checkout notifications, set `WHATSAPP_TOKEN`,
-`WHATSAPP_PHONE_NUMBER_ID`, and `WHATSAPP_NOTIFY_TO` in the Cloudflare Worker
-environment. Notifications are best-effort; checkout still succeeds if Meta
-rejects the alert.
-
-## Verify Account Context
-
-```bash
+```sh
+npm ci
+npm run validate
 npm run cf:whoami
-```
-
-Once your token is present, this should resolve against account `e1d8076a3dc603837814ca828736561f`.
-
-## Other Required Runtime Secrets
-
-Set these in Worker environment variables:
-
-- `PUBLIC_SUPABASE_URL`
-- `PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `PUBLIC_FALLBACK_IMAGE_URL` (recommended)
-- `PUBLIC_TURNSTILE_SITE_KEY`
-- `TURNSTILE_SECRET_KEY`
-
-## One Deployment Command
-
-```bash
 npm run deploy
-```
-
-What it does:
-
-1. `npm run build`
-2. `scripts/deploy-worker.sh`
-3. Loads project-local Cloudflare env values
-4. Deploys via `npx wrangler deploy --config wrangler.jsonc`
-
-The deploy script enforces:
-
-- `CLOUDFLARE_API_TOKEN` must be set
-- `CLOUDFLARE_ACCOUNT_ID` must match `e1d8076a3dc603837814ca828736561f`
-- `wrangler.jsonc` account id must match `e1d8076a3dc603837814ca828736561f`
-
-## Custom Domain Cutover
-
-The storefront Worker is configured for the apex custom domain:
-
-- `sesicthub.co.ke` -> `ses-hub-superbase-stack-app`
-
-The repo also includes a small redirect Worker for the `www` host:
-
-- `www.sesicthub.co.ke` -> `https://sesicthub.co.ke`
-
-Deploy the redirect Worker with:
-
-```bash
 bash scripts/deploy-www-redirect.sh
 ```
 
-Important:
+Worker runtime secrets must be uploaded separately with `wrangler secret bulk`,
+using a private JSON file containing only application values (never the deployment
+API token). Public values must also be present during the build. Keep private
+values out of client bundles. Configure Supabase Auth's site URL and redirect allow
+list for the production URL and the explicit preview callback URL.
 
-- Cloudflare will not attach a Worker custom domain while `sesicthub.co.ke` or `www.sesicthub.co.ke` still have existing DNS records.
-- Delete or replace those DNS records in Cloudflare first, using a token or dashboard session with DNS edit permissions.
-- After the DNS records are cleared or you switch to a DNS-edit token, run:
+## GitHub Actions
 
-```bash
-bash scripts/attach-apex-domain.sh
-bash scripts/deploy-www-redirect.sh
-```
+CI validates pushes and pull requests. Deployment is manually dispatched while the
+domain migration is pending. Configure the `production` environment with the public
+build values and Cloudflare credentials listed above before running Deploy. The workflow uploads the six application bindings, including the two private runtime
+keys, from the production environment using a temporary private file. Other existing
+Worker secrets are preserved. Git SSH access alone cannot configure GitHub Actions secrets; use repository Settings
+or an authenticated GitHub CLI. The client production environment has been configured. Container publishing remains a separate workflow.
 
-## SESSION KV Binding
+## Domain cutover: not ready until all checks pass
 
-Astro Cloudflare adapter expects a `SESSION` KV binding for session storage.
+The client's assigned nameservers are `ullis.ns.cloudflare.com` and
+`wesley.ns.cloudflare.com`. Do not change delegation merely because a preview works.
 
-This project is now configured with:
+1. Export source DNS with the API or dashboard and compare every record in the client
+   zone, including MX, SPF, DKIM, DMARC, CAA and verification records. Do not copy
+   Cloudflare proxy IP addresses from public DNS discovery as origin addresses.
+2. Check DNSSEC at the registrar and source zone. Remove the old DS configuration
+   before changing nameservers if DNSSEC is enabled. Confirm no source zone hold.
+3. Verify the preview: catalogue images, account pages, server API configuration,
+   Turnstile, and expected redirects. Confirm any external payment, messaging or
+   email-provider credentials and webhooks separately.
+4. Reconcile any customers/orders added to the live source since the database copy.
+   A snapshot is not continuous replication; plan the final write handoff before
+   customers can place orders against both databases.
+5. Resolve certificate readiness. Cloudflare reissues certificates after account
+   moves. A pending zone cannot proxy traffic, and Worker custom domains require an
+   active zone. The Free plan staging workflow does not guarantee zero downtime.
+   If uninterrupted TLS is mandatory, arrange Cloudflare's prevalidated certificate
+   approach before scheduling the move; paid certificate products are not enabled
+   automatically by this project.
+6. At the agreed cutover, update the registrar delegation, wait for the client zone
+   to become Active, then attach the Worker domains:
 
-- production `SESSION` namespace id: `855da47786b843709e951dcef310b455`
-- preview `SESSION` namespace id: `bccf2071bd4b43a183df8c896f240b15`
+   ```sh
+   bash scripts/attach-apex-domain.sh
+   bash scripts/deploy-www-redirect.sh --attach
+   ```
 
-The binding lives in `wrangler.jsonc`.
+   Both commands refuse to attach while the client zone is pending. The apex command
+   records the production route in `wrangler.jsonc`; validate, commit and push that
+   change so later deployments retain the route.
+7. Verify valid HTTPS on apex and www, path/query-preserving www redirects, DNS/mail,
+   sign-in, images and checkout before declaring cutover complete. Re-enable DNSSEC
+   with the client's DS values only after the new delegation is stable.
 
-## Current Cutover Blocker
+Retain the old deployment and private database backups until verification is complete.
+Reverting nameservers is not an instant rollback because resolvers cache delegation.
 
-As of March 9, 2026, the Worker upload succeeds, but custom-domain cutover still requires a Cloudflare token with DNS edit permission.
-
-The current token can:
-
-- upload Workers
-- create KV namespaces
-- read zone metadata
-
-The current token cannot:
-
-- list DNS records
-- replace existing apex or `www` DNS records during Worker custom-domain attachment
+References: [Cloudflare account moves](https://developers.cloudflare.com/fundamentals/manage-domains/move-domain/),
+[Worker custom domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).

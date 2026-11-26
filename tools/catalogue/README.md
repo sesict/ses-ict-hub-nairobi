@@ -15,7 +15,7 @@ Install the pinned dependencies with `python3 -m pip install -r tools/catalogue/
 
 ```bash
 python3 tools/catalogue/prepare.py \
-  --public-base https://jddjdebcuruzwxiwaqfq.supabase.co/storage/v1/object/public/product-images
+  --public-base https://qpopsroxrljpcryawmpb.supabase.co/storage/v1/object/public/product-images
 ```
 
 Defaults use the supplied drop folders and write to `output/catalogue-review/`:

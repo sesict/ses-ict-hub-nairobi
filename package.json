@@ -7,11 +7,11 @@
     "npm": ">=9.6.5"
   },
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
+    "dev": "node scripts/client-command.mjs astro dev",
+    "start": "node scripts/client-command.mjs astro dev",
     "check": "astro check",
     "lint": "npm run check",
-    "build": "astro build && cp .assetsignore dist/.assetsignore",
+    "build": "node scripts/client-command.mjs astro build && cp .assetsignore dist/client/.assetsignore",
     "preview": "astro preview",
     "test": "tsx --test tests/*.test.ts",
     "copy:fix": "node tools/node/copy-autofix.js",

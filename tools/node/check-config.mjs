@@ -2,7 +2,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 const rootDir = process.cwd();
-const expectedAccountId = 'e1d8076a3dc603837814ca828736561f';
+const expectedAccountId = '4b4295025db1d29a5f0a52288da307bb';
 const requiredEnvKeys = [
   'PUBLIC_SUPABASE_URL',
   'PUBLIC_SUPABASE_ANON_KEY',
@@ -42,6 +42,7 @@ const issues = [];
 const packageJson = parseJson(await readText('package.json'), 'package.json', issues);
 const scripts = packageJson.scripts ?? {};
 assert(scripts.deploy === 'npm run build && bash scripts/deploy-worker.sh', 'package.json deploy script must keep manual Worker deploy flow', issues);
+assert(scripts.build?.includes('cp .assetsignore dist/client/.assetsignore'), 'Asset exclusions must be inside the uploaded assets directory', issues);
 assert(!scripts.validate?.includes('copy:fix'), 'package.json validate must not run mutating copy:fix', issues);
 assert(scripts.validate?.includes('config:check'), 'package.json validate must include config:check', issues);
 assert(scripts['copy:check'] === 'npm run copy:lint', 'package.json copy:check must be non-mutating', issues);
@@ -60,7 +61,8 @@ assert(wranglerConfig.assets?.directory === 'dist/client', 'wrangler.jsonc asset
 assert(wranglerConfig.no_bundle === true, 'wrangler.jsonc must deploy Astro output without rebundling', issues);
 assert(wranglerConfig.rules?.some((rule) => rule.type === 'ESModule' && rule.globs?.includes('**/*.mjs')), 'wrangler.jsonc must treat generated Astro modules as ES modules', issues);
 assert(wranglerConfig.kv_namespaces?.some((namespace) => namespace.binding === 'SESSION'), 'wrangler.jsonc must define the SESSION KV binding', issues);
-assert(wranglerConfig.routes?.some((route) => route.pattern === 'sesicthub.co.ke' && route.custom_domain === true), 'wrangler.jsonc must keep the apex custom domain route', issues);
+assert(Array.isArray(wranglerConfig.routes) && wranglerConfig.routes.every((route) => route.pattern === 'sesicthub.co.ke' && route.custom_domain === true && route.zone_id === 'f1b6d3e1359d5c5837ce547c0da54ccc'), 'wrangler.jsonc may only attach the client apex domain after cutover', issues);
+assert(wranglerConfig.workers_dev === true, 'Keep the client preview available for cutover verification', issues);
 
 const wranglerBuildConfig = parseJson(await readText('wrangler.build.jsonc'), 'wrangler.build.jsonc', issues);
 assert(wranglerBuildConfig.account_id === expectedAccountId, 'wrangler.build.jsonc account_id must match the locked Cloudflare account', issues);

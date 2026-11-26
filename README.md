@@ -116,7 +116,7 @@ tools/python/requirements.txt
 
 ```bash
 npm install
-cp .env.example .env.local
+cp .env.example .env.client.local
 npm run dev
 ```
 
@@ -142,9 +142,9 @@ npm run deploy
 
 ## Environment Variables
 
-Create `.env.local` for local development.
+Create `.env.client.local` for client account development.
 
-Use `.env` only when your local workflow requires it. Do **not** commit real secrets.
+The original `.env` is retained privately for migration reference. Client commands read `.env.client.local`. Do **not** commit real secrets.
 
 ```env
 PUBLIC_SUPABASE_URL=https://<project>.supabase.co
@@ -316,7 +316,7 @@ Secrets should stay in `.env.local`. The Docker image ignores `.env` files so cr
 The `Publish container` workflow publishes the development image to:
 
 ```text
-ghcr.io/verseexplainer-dotcom/seshub_nairobi:latest
+ghcr.io/sesict/ses-ict-hub-nairobi:latest
 ```
 
 It runs on pushes to `main` and can also be started from the Actions tab. The workflow uses GitHub's automatic package token; Supabase and Cloudflare secrets are not included in the image.
@@ -405,7 +405,7 @@ node tools/node/upload-supabase-assets.mjs \
 
 ## Deployment
 
-Production deployment is **Cloudflare Worker only**.
+Production deployment is **Cloudflare Worker only**. The client preview is staged on workers.dev until domain cutover. See [the client deployment guide](docs/deployment.md) before changing nameservers.
 
 ```bash
 npm run deploy
@@ -423,7 +423,7 @@ The deploy script enforces:
 * `wrangler.jsonc` account id must match:
 
 ```text
-e1d8076a3dc603837814ca828736561f
+4b4295025db1d29a5f0a52288da307bb
 ```
 
 Recommended deployment flow:
