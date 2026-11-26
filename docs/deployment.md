@@ -62,6 +62,32 @@ keys, from the production environment using a temporary private file. Other exis
 Worker secrets are preserved. Git SSH access alone cannot configure GitHub Actions secrets; use repository Settings
 or an authenticated GitHub CLI. The client production environment has been configured. Container publishing remains a separate workflow.
 
+## Client handover
+
+The repository's `production` environment contains all eight required values listed
+above. CI runs on pushes and pull requests. To deploy, open
+[Actions → Deploy](https://github.com/sesict/ses-ict-hub-nairobi/actions/workflows/deploy.yml),
+choose **Run workflow**, and select `main`. The job validates, builds with the public
+values, uploads the runtime bindings, and deploys to the client account. There is no
+additional Cloudflare GitHub connection to configure for this Actions-based pipeline.
+Keep deployments manual until custom domains and HTTPS have been verified.
+
+To rotate a credential, update its GitHub `production` environment secret and the
+private local `.env.client.local`, then run Deploy again. Public keys and URLs require
+a new build; the workflow handles that. The runtime bridge uses `cloudflare:workers`
+for Astro 6 rather than the removed `locals.runtime.env` API.
+
+The two SESSION KV namespaces are already provisioned. The www redirect Worker is
+staged separately. Both Workers must have their own custom domains attached after
+activation: apex on `ses-hub-superbase-stack-app`, www on
+`ses-ict-hub-www-redirect`. Do not attach both hostnames to the redirect Worker.
+
+Remaining dashboard checks are DNS/mail record comparison, zone activation, valid
+certificates, and allowing the preview hostname on the client's Turnstile widget.
+The production apex is already allowed by that widget. A live form test should
+follow after hostname approval; validation without a challenge token deliberately
+stops before creating any customer/order/newsletter data.
+
 ## Domain cutover: not ready until all checks pass
 
 The client's assigned nameservers are `ullis.ns.cloudflare.com` and

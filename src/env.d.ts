@@ -10,6 +10,7 @@ declare global {
       profile: ProfileRecord | null;
       isStaff: boolean;
       isAdmin: boolean;
+      cloudflareEnv?: RuntimeEnv;
       runtime?: {
         env?: RuntimeEnv;
       } & Record<string, unknown>;

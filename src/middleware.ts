@@ -1,4 +1,5 @@
-import type { SessionLocals } from './lib/app-types';
+import { env } from 'cloudflare:workers';
+import type { RuntimeEnv, SessionLocals } from './lib/app-types';
 import { defineMiddleware } from 'astro:middleware';
 import { buildPathWithMessage, redirectResponse } from './lib/auth-utils';
 import { hasSupabaseAuthCookie } from './lib/http-cache';
@@ -15,6 +16,8 @@ const LOGOUT_PATH = '/api/auth/logout';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const locals = context.locals as SessionLocals;
+  // Astro 6 exposes Worker bindings through cloudflare:workers.
+  locals.cloudflareEnv = env as unknown as RuntimeEnv;
   locals.user = null;
   locals.profile = null;
   locals.isStaff = false;

@@ -18,10 +18,11 @@ function readRuntimeEnv(source?: RuntimeSource) {
 
   try {
     if ('locals' in source) {
-      return source.locals?.runtime?.env ?? {};
+      return source.locals?.cloudflareEnv ?? source.locals?.runtime?.env ?? {};
     }
 
-    return (source as SessionLocals).runtime?.env ?? {};
+    const locals = source as SessionLocals;
+    return locals.cloudflareEnv ?? locals.runtime?.env ?? {};
   } catch {
     return {};
   }
