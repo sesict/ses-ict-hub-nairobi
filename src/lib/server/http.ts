@@ -40,7 +40,11 @@ export function errorResponse(
 export function getRuntimeEnv(locals: unknown) {
   let runtimeEnv: Record<string, string | undefined> = {};
   try {
-    runtimeEnv = (locals as { runtime?: { env?: Record<string, string | undefined> } } | null)?.runtime?.env ?? {};
+    const requestLocals = locals as {
+      cloudflareEnv?: Record<string, string | undefined>;
+      runtime?: { env?: Record<string, string | undefined> };
+    } | null;
+    runtimeEnv = requestLocals?.cloudflareEnv ?? requestLocals?.runtime?.env ?? {};
   } catch {
     runtimeEnv = {};
   }

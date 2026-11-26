@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { getRuntimeEnv as getApiRuntimeEnv } from '../src/lib/server/http';
 import { getRuntimeEnv, hasPublicSupabaseConfig } from '../src/lib/runtime';
 
 test('local preview detects missing Supabase credentials without throwing', () => {
@@ -40,6 +41,9 @@ test('Astro 6 Worker bindings provide server secrets without reading removed run
       }
     }
   };
+  const apiEnv = getApiRuntimeEnv(locals);
+  assert.equal(apiEnv.SUPABASE_SERVICE_ROLE_KEY, 'server-secret');
+  assert.equal(apiEnv.TURNSTILE_SECRET_KEY, 'challenge-secret');
   for (const source of [locals, { locals }]) {
     const env = getRuntimeEnv(source);
     assert.equal(env.SUPABASE_SERVICE_ROLE_KEY, 'server-secret');
