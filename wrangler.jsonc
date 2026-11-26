@@ -32,5 +32,11 @@
     "binding": "ASSETS",
     "directory": "dist/client"
   },
-  "routes": []
+  "routes": [
+    {
+      "pattern": "sesicthub.co.ke",
+      "custom_domain": true,
+      "zone_id": "f1b6d3e1359d5c5837ce547c0da54ccc"
+    }
+  ]
 }
